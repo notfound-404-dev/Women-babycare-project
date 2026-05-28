@@ -1,0 +1,612 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Checkout Header -->
+<div class="checkout-header">
+    <div class="container-lg">
+        <h1 class="checkout-title">Secure Checkout</h1>
+        <p class="checkout-subtitle">Review and complete your purchase</p>
+    </div>
+</div>
+
+<div class="container-lg checkout-wrapper">
+    <div class="row g-4">
+        <!-- Left Column: Order Details (8 columns) -->
+        <div class="col-lg-8">
+            <!-- Order Summary -->
+            <div class="checkout-card">
+                <div class="checkout-card-header">
+                    <h3><i class="bi bi-bag-check"></i> Order Summary</h3>
+                </div>
+                <div class="checkout-card-body">
+                    <div class="order-items-list">
+                        {% for item in cart.items.all %}
+                        <div class="order-item">
+                            <div class="item-info">
+                                <div class="item-name">{{ item.product.name }}</div>
+                                <div class="item-category">{{ item.product.category.name }}</div>
+                            </div>
+                            <div class="item-qty">Qty: <strong>{{ item.quantity }}</strong></div>
+                            <div class="item-unit-price">₹{{ item.product.price }}</div>
+                            <div class="item-subtotal">₹{{ item.product.price|mul:item.quantity }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="checkout-divider"></div>
+
+                    <div class="order-summary-breakdown">
+                        <div class="breakdown-row">
+                            <span>Subtotal:</span>
+                            <strong>₹{{ total }}</strong>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Shipping:</span>
+                            <strong class="text-success">FREE</strong>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Tax:</span>
+                            <strong>₹0</strong>
+                        </div>
+                        <div class="breakdown-row breakdown-total">
+                            <span>Total:</span>
+                            <strong>₹{{ total }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="checkout-card">
+                <div class="checkout-card-header">
+                    <h3><i class="bi bi-geo-alt"></i> Delivery Address</h3>
+                    <a href="{% url 'accounts:quick_address' %}" class="edit-link">Edit</a>
+                </div>
+                <div class="checkout-card-body">
+                    <div class="address-display">
+                        <div class="address-name">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="address-text">
+                            {{ profile.house_number }}, {{ profile.street_name }}<br>
+                            {{ profile.city }}, {{ profile.state }} {{ profile.pincode }}<br>
+                            {{ profile.country }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancellation Policy -->
+            <div class="checkout-card policy-card">
+                <div class="checkout-card-header">
+                    <h3><i class="bi bi-info-circle"></i> Cancellation Policy</h3>
+                </div>
+                <div class="checkout-card-body">
+                    <div class="policy-content">
+                        <div class="policy-header">
+                            <i class="bi bi-clock-history"></i>
+                            <strong>Cancel within 24 hours</strong>
+                        </div>
+                        <p class="policy-text">You can cancel your order within 24 hours of placing it. Once the order moves to packed or shipped status, cancellation will not be allowed.</p>
+                        <div class="policy-benefits">
+                            <div class="benefit">
+                                <i class="bi bi-check-circle"></i>
+                                <span>Full refund if cancelled</span>
+                            </div>
+                            <div class="benefit">
+                                <i class="bi bi-lightning-charge"></i>
+                                <span>Instant cancellation process</span>
+                            </div>
+                            <div class="benefit">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Easy to cancel from order page</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Payment Summary (4 columns) -->
+        <div class="col-lg-4">
+            <div class="payment-sticky">
+                <!-- Payment Summary Card -->
+                <div class="payment-card">
+                    <div class="payment-card-header">
+                        <h3><i class="bi bi-credit-card"></i> Payment Summary</h3>
+                    </div>
+                    <div class="payment-card-body">
+                        <div class="payment-row">
+                            <span>Items ({{ item_count }}):</span>
+                            <strong>₹{{ total }}</strong>
+                        </div>
+                        <div class="payment-row">
+                            <span>Shipping:</span>
+                            <strong class="text-success">FREE</strong>
+                        </div>
+                        <div class="payment-row">
+                            <span>Tax:</span>
+                            <strong>₹0</strong>
+                        </div>
+
+                        <div class="payment-divider"></div>
+
+                        <div class="payment-row payment-total">
+                            <span>Total Amount:</span>
+                            <strong>₹{{ total }}</strong>
+                        </div>
+
+                        <!-- Test Mode Info -->
+                        <div class="test-mode-info">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Test Mode - No real charge</span>
+                        </div>
+
+                        <!-- Place Order Button -->
+                        <form method="post" class="place-order-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-place-order">
+                                <i class="bi bi-check-circle"></i> Place Order
+                            </button>
+                        </form>
+
+                        <!-- Back to Cart -->
+                        <a href="{% url 'cart:summary' %}" class="btn-back-to-cart">
+                            <i class="bi bi-arrow-left"></i> Back to Cart
+                        </a>
+
+                        <!-- Trust Badges -->
+                        <div class="trust-badges">
+                            <div class="badge-item">
+                                <i class="bi bi-shield-check"></i>
+                                <span>100% Secure</span>
+                            </div>
+                            <div class="badge-item">
+                                <i class="bi bi-arrow-repeat"></i>
+                                <span>Easy Returns</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.checkout-header {
+    background: linear-gradient(135deg, #2F4156, #5B7C8D);
+    color: white;
+    padding: 3rem 0 2rem;
+    margin-bottom: 2rem;
+}
+
+.checkout-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.checkout-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.checkout-wrapper {
+    padding-bottom: 4rem;
+}
+
+.checkout-card {
+    background: white;
+    border-radius: 0.8rem;
+    border: 1px solid #C8D9E6;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.checkout-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.checkout-card-header {
+    padding: 1.5rem;
+    background: #F5EFEB;
+    border-bottom: 1px solid #C8D9E6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkout-card-header h3 {
+    margin: 0;
+    color: #2F4156;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.checkout-card-header i {
+    color: #5B7C8D;
+    font-size: 1.3rem;
+}
+
+.edit-link {
+    color: #5B7C8D;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #5B7C8D;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    transition: all 0.3s ease;
+}
+
+.edit-link:hover {
+    background: #5B7C8D;
+    color: white;
+}
+
+.checkout-card-body {
+    padding: 1.5rem;
+}
+
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-item {
+    display: grid;
+    grid-template-columns: 2fr 0.8fr 0.8fr 0.8fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: #F5EFEB;
+    border-radius: 0.6rem;
+    align-items: center;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.item-name {
+    color: #2F4156;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.item-category {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.item-qty, .item-unit-price, .item-subtotal {
+    text-align: right;
+    font-weight: 600;
+    color: #2F4156;
+}
+
+.item-subtotal {
+    color: #5B7C8D;
+}
+
+.checkout-divider {
+    height: 1px;
+    background: #C8D9E6;
+    margin: 1.5rem 0;
+}
+
+.order-summary-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    padding: 0.5rem 0;
+}
+
+.breakdown-row strong {
+    color: #2F4156;
+    font-weight: 600;
+}
+
+.breakdown-total {
+    border-top: 2px solid #C8D9E6;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    font-weight: 700;
+}
+
+.breakdown-total strong {
+    color: #5B7C8D;
+    font-size: 1.1rem;
+}
+
+.address-display {
+    background: #F5EFEB;
+    padding: 1.5rem;
+    border-radius: 0.6rem;
+    border-left: 4px solid #5B7C8D;
+}
+
+.address-name {
+    color: #2F4156;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    font-size: 1.05rem;
+}
+
+.address-text {
+    color: #333;
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+.payment-sticky {
+    position: sticky;
+    top: 100px;
+}
+
+.payment-card {
+    background: white;
+    border: 1px solid #C8D9E6;
+    border-radius: 0.8rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.payment-card-header {
+    padding: 1.5rem;
+    background: #1d9a00;
+    border-bottom: 1px solid #C8D9E6;
+}
+
+.payment-card-header h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.payment-card-header i {
+    color: #ffffff;
+    font-size: 1.3rem;
+}
+
+.payment-card-body {
+    padding: 1.5rem;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    font-size: 0.95rem;
+}
+
+.payment-row strong {
+    color: #2F4156;
+    font-weight: 600;
+}
+
+.payment-divider {
+    height: 1px;
+    background: #C8D9E6;
+    margin: 1rem 0;
+}
+
+.payment-total {
+    border-top: 2px solid #C8D9E6;
+    padding-top: 1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.payment-total strong {
+    color: #5B7C8D;
+    font-size: 1.2rem;
+}
+
+.test-mode-info {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 0.6rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.test-mode-info i {
+    font-size: 1.1rem;
+}
+
+.place-order-form {
+    margin: 1rem 0;
+}
+
+.btn-place-order {
+    width: 100%;
+    padding: 1rem;
+    /* background: linear-gradient(135deg, #5B7C8D, #2F4156); */
+    background: #1d9a00;
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.3s ease;
+}
+
+.btn-place-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(91, 124, 141, 0.3);
+}
+
+.btn-place-order:active {
+    transform: translateY(0);
+}
+
+.btn-back-to-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.8rem;
+    background: white;
+    color: #5B7C8D;
+    border: 2px solid #5B7C8D;
+    border-radius: 0.6rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.btn-back-to-cart:hover {
+    background: #5B7C8D;
+    color: white;
+    text-decoration: none;
+}
+
+.trust-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #C8D9E6;
+}
+
+.badge-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #2F4156;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.badge-item i {
+    color: #5B7C8D;
+    font-size: 1.2rem;
+}
+
+.policy-card {
+    border-left: 4px solid #17a2b8;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e0f7ff 100%);
+}
+
+.policy-card .checkout-card-header {
+    background: #f0f8ff;
+}
+
+.policy-content {
+    padding: 1rem 0;
+}
+
+.policy-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: #0c5460;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+}
+
+.policy-header i {
+    color: #17a2b8;
+    font-size: 1.3rem;
+}
+
+.policy-text {
+    color: #0c5460;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.policy-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.benefit {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #0c5460;
+    font-size: 0.9rem;
+}
+
+.benefit i {
+    color: #17a2b8;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+@media (max-width: 991px) {
+    .payment-sticky {
+        position: static;
+    }
+
+    .order-item {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .item-qty {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .checkout-title {
+        font-size: 1.5rem;
+    }
+
+    .checkout-card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .order-item {
+        grid-template-columns: 1fr;
+    }
+
+    .item-qty, .item-unit-price, .item-subtotal {
+        text-align: left;
+    }
+}
+</style>
+
+{% endblock %}

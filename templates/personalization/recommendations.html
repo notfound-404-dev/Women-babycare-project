@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Smart Recommendations</h2>
+<div class="row">
+{% for product in products %}
+    <div class="col-md-3 mb-3">
+        <div class="card"><div class="card-body">
+            <h6>{{ product.name }}</h6>
+            <p>₹{{ product.price }}</p>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'products:detail' product.pk %}">View</a>
+        </div></div>
+    </div>
+{% empty %}
+    <p>No recommendations yet. Start searching and ordering products.</p>
+{% endfor %}
+</div>
+{% endblock %}

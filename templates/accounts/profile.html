@@ -1,0 +1,1407 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="container-lg">
+        <h1 class="profile-title">My Account</h1>
+        <p class="profile-subtitle">Manage your account settings, password, delivery address, and personal information</p>
+    </div>
+</div>
+
+<div class="container-lg profile-container">
+    <div class="row g-4">
+        <!-- Left Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="section-nav">
+                <a href="#account" class="nav-link active" onclick="scrollToSection('account')">
+                    <i class="bi bi-shield-check"></i> Account Settings
+                </a>
+                <a href="#password" class="nav-link" onclick="scrollToSection('password')">
+                    <i class="bi bi-key"></i> Change Password
+                </a>
+                <a href="#personal" class="nav-link" onclick="scrollToSection('personal')">
+                    <i class="bi bi-person"></i> Personal Info
+                </a>
+                <a href="#address" class="nav-link" onclick="scrollToSection('address')">
+                    <i class="bi bi-geo-alt"></i> Delivery Address
+                </a>
+                <a href="#parental" class="nav-link" onclick="scrollToSection('parental')">
+                    <i class="bi bi-people"></i> Parental Info
+                </a>
+                <a href="#pregnancy" class="nav-link" onclick="scrollToSection('pregnancy')">
+                    <i class="bi bi-heart"></i> Pregnancy Info
+                </a>
+                <a href="#health" class="nav-link" onclick="scrollToSection('health')">
+                    <i class="bi bi-hospital"></i> Health & Allergies
+                </a>
+                <a href="#danger" class="nav-link danger" onclick="scrollToSection('danger')">
+                    <i class="bi bi-exclamation-triangle"></i> Danger Zone
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Display Messages -->
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Account Settings Section -->
+            <div id="account" class="profile-card">
+                <div class="card-header-section">
+                    <h3><i class="bi bi-shield-check"></i> Account Settings</h3>
+                    <p class="header-subtitle">Manage your email address</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate class="account-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="account">
+                        
+                        <!-- Username (Read-only) -->
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control profile-input" value="{{ user.username }}" disabled>
+                            <small class="form-text">Your username is your email address. It cannot be changed.</small>
+                        </div>
+
+                        <!-- Email Address -->
+                        <div class="form-group">
+                            <label for="id_email" class="form-label">Email Address <span class="required">*</span></label>
+                            {{ account_form.email }}
+                            {% if account_form.email.errors %}
+                            <div class="form-error">
+                                {% for error in account_form.email.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- User Info (Read-only) -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control profile-input" value="{{ user.first_name }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Mobile Number</label>
+                                    <input type="text" class="form-control profile-input" value="{{ user.profile.mobile_number }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-check-circle"></i> Update Email
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password Change Section -->
+            <div id="password" class="profile-card">
+                <div class="card-header-section">
+                    <h3><i class="bi bi-key"></i> Change Password</h3>
+                    <p class="header-subtitle">Update your password to keep your account secure</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate class="password-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="password">
+                        
+                        <!-- Current Password -->
+                        <div class="form-group">
+                            <label for="id_old_password" class="form-label">Current Password <span class="required">*</span></label>
+                            {{ password_form.old_password }}
+                            {% if password_form.old_password.errors %}
+                            <div class="form-error">
+                                {% for error in password_form.old_password.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- New Password -->
+                        <div class="form-group">
+                            <label for="id_new_password1" class="form-label">New Password <span class="required">*</span></label>
+                            {{ password_form.new_password1 }}
+                            {% if password_form.new_password1.errors %}
+                            <div class="form-error">
+                                {% for error in password_form.new_password1.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text">Password must be at least 8 characters and contain uppercase, lowercase, numbers, and special characters.</small>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="id_new_password2" class="form-label">Confirm New Password <span class="required">*</span></label>
+                            {{ password_form.new_password2 }}
+                            {% if password_form.new_password2.errors %}
+                            <div class="form-error">
+                                {% for error in password_form.new_password2.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-lock"></i> Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Personal Information Section -->
+            <div id="personal" class="profile-card">
+                <div class="card-header-section">
+                    <div class="section-header-flex">
+                        <div>
+                            <h3><i class="bi bi-person"></i> Personal Information</h3>
+                            <p class="header-subtitle">Tell us more about yourself</p>
+                        </div>
+                        {% if form.instance.date_of_birth or form.instance.gender or form.instance.marital_status %}
+                        <button type="button" class="btn-edit" onclick="toggleSection('personal-form')">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Summary View (if data exists) -->
+                    {% if form.instance.date_of_birth or form.instance.gender or form.instance.marital_status %}
+                    <div id="personal-summary" class="data-summary">
+                        <div class="summary-grid">
+                            {% if form.instance.date_of_birth %}
+                            <div class="summary-item">
+                                <span class="summary-label">Date of Birth</span>
+                                <span class="summary-value">{{ form.instance.date_of_birth|date:"M d, Y" }}</span>
+                            </div>
+                            {% endif %}
+                            {% if form.instance.gender %}
+                            <div class="summary-item">
+                                <span class="summary-label">Gender</span>
+                                <span class="summary-value">{{ form.instance.get_gender_display }}</span>
+                            </div>
+                            {% endif %}
+                            {% if form.instance.marital_status %}
+                            <div class="summary-item">
+                                <span class="summary-label">Marital Status</span>
+                                <span class="summary-value">{{ form.instance.get_marital_status_display }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form View (hidden by default if data exists) -->
+                    <form method="post" novalidate class="profile-form" id="personal-form" style="{% if form.instance.date_of_birth or form.instance.gender or form.instance.marital_status %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="personal">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                                    {{ personal_form.date_of_birth }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_gender" class="form-label">Gender</label>
+                                    {{ personal_form.gender }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_marital_status" class="form-label">Marital Status</label>
+                                    {{ personal_form.marital_status }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-check-circle"></i> Save Personal Info
+                            </button>
+                            <button type="button" class="btn-cancel" onclick="toggleSection('personal-form')">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delivery Address Section -->
+            <div id="address" class="profile-card">
+                <div class="card-header-section">
+                    <div class="section-header-flex">
+                        <div>
+                            <h3><i class="bi bi-geo-alt"></i> Delivery Address</h3>
+                            <p class="header-subtitle">Where should we deliver your orders?</p>
+                        </div>
+                        {% if form.instance.house_number or form.instance.city %}
+                        <button type="button" class="btn-edit" onclick="toggleSection('address-form')">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Summary View (if data exists) -->
+                    {% if form.instance.house_number or form.instance.city %}
+                    <div id="address-summary" class="data-summary">
+                        <div class="address-summary-card">
+                            <div class="address-summary-content">
+                                {{ form.instance.house_number }}{% if form.instance.house_number %},{% endif %}
+                                {{ form.instance.street_name }}<br>
+                                {{ form.instance.city }}{% if form.instance.city %},{% endif %}
+                                {{ form.instance.state }} {{ form.instance.pincode }}<br>
+                                {{ form.instance.country }}
+                            </div>
+                            {% if form.instance.is_default_address %}
+                            <span class="badge-default">Default Address</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form View (hidden by default if data exists) -->
+                    <form method="post" novalidate class="address-form" id="address-form" style="{% if form.instance.house_number or form.instance.city %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="address">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_house_number" class="form-label">House / Flat Number</label>
+                                    {{ address_form.house_number }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_street_name" class="form-label">Street Name</label>
+                                    {{ address_form.street_name }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_city" class="form-label">City</label>
+                                    {{ address_form.city }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_state" class="form-label">State</label>
+                                    {{ address_form.state }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_pincode" class="form-label">Pincode</label>
+                                    {{ address_form.pincode }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_country" class="form-label">Country</label>
+                                    {{ address_form.country }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                {{ address_form.is_default_address }}
+                                <label class="form-check-label" for="id_is_default_address">
+                                    Make this my default delivery address
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-check-circle"></i> Save Address
+                            </button>
+                            <button type="button" class="btn-cancel" onclick="toggleSection('address-form')">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Parental Information Section -->
+            <div id="parental" class="profile-card">
+                <div class="card-header-section">
+                    <div class="section-header-flex">
+                        <div>
+                            <h3><i class="bi bi-people"></i> Parental Information</h3>
+                            <p class="header-subtitle">Help us recommend products for your little ones</p>
+                        </div>
+                        {% if form.instance.is_parent %}
+                        <button type="button" class="btn-edit" onclick="toggleSection('parental-form')">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Summary View (if data exists) -->
+                    {% if form.instance.is_parent %}
+                    <div id="parental-summary" class="data-summary">
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="summary-label">Parent Status</span>
+                                <span class="summary-value">
+                                    {% if form.instance.is_parent == 'yes' %}
+                                        <span class="badge-yes">Yes</span>
+                                    {% else %}
+                                        <span class="badge-no">No</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% if form.instance.baby_age_group and form.instance.is_parent == 'yes' %}
+                            <div class="summary-item">
+                                <span class="summary-label">Baby Age Group</span>
+                                <span class="summary-value">{{ form.instance.get_baby_age_group_display }}</span>
+                            </div>
+                            {% endif %}
+                            {% if form.instance.baby_gender and form.instance.is_parent == 'yes' %}
+                            <div class="summary-item">
+                                <span class="summary-label">Baby Gender</span>
+                                <span class="summary-value">{{ form.instance.get_baby_gender_display }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form View (hidden by default if data exists) -->
+                    <form method="post" novalidate class="parental-form" id="parental-form" style="{% if form.instance.is_parent %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="parental">
+                        
+                        <div class="form-group">
+                            <label for="id_is_parent" class="form-label">Are you a parent? <span class="required">*</span></label>
+                            {{ parental_form.is_parent }}
+                            <small class="form-text">Helps us provide better product recommendations and offers</small>
+                        </div>
+
+                        <div id="baby-info" style="display: none;" class="baby-info-container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_baby_age_group" class="form-label">Baby Age Group</label>
+                                        {{ parental_form.baby_age_group }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_baby_gender" class="form-label">Baby Gender</label>
+                                        {{ parental_form.baby_gender }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-check-circle"></i> Save Parental Info
+                            </button>
+                            <button type="button" class="btn-cancel" onclick="toggleSection('parental-form')">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pregnancy Information Section -->
+            <div id="pregnancy" class="profile-card">
+                <div class="card-header-section">
+                    <div class="section-header-flex">
+                        <div>
+                            <h3><i class="bi bi-heart"></i> Pregnancy Information</h3>
+                            <p class="header-subtitle">Expected or currently pregnant?</p>
+                        </div>
+                        {% if form.instance.pregnancy_stage %}
+                        <button type="button" class="btn-edit" onclick="toggleSection('pregnancy-form')">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Summary View (if data exists) -->
+                    {% if form.instance.pregnancy_stage %}
+                    <div id="pregnancy-summary" class="data-summary">
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="summary-label">Pregnancy Stage</span>
+                                <span class="summary-value">{{ form.instance.get_pregnancy_stage_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form View (hidden by default if data exists) -->
+                    <form method="post" novalidate class="pregnancy-form" id="pregnancy-form" style="{% if form.instance.pregnancy_stage %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="pregnancy">
+                        
+                        <div class="form-group">
+                            <label for="id_pregnancy_stage" class="form-label">Pregnancy Stage</label>
+                            {{ pregnancy_form.pregnancy_stage }}
+                            <small class="form-text">Select your current stage if applicable. This helps us recommend relevant products and information.</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-check-circle"></i> Save Pregnancy Info
+                            </button>
+                            <button type="button" class="btn-cancel" onclick="toggleSection('pregnancy-form')">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Health & Allergies Section -->
+            <div id="health" class="profile-card">
+                <div class="card-header-section">
+                    <div class="section-header-flex">
+                        <div>
+                            <h3><i class="bi bi-hospital"></i> Health & Allergies</h3>
+                            <p class="header-subtitle">Tell us about any health concerns</p>
+                        </div>
+                        {% if form.instance.health_condition %}
+                        <button type="button" class="btn-edit" onclick="toggleSection('health-form')">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Summary View (if data exists) -->
+                    {% if form.instance.health_condition %}
+                    <div id="health-summary" class="data-summary">
+                        <div class="health-summary-box">
+                            <p>{{ form.instance.health_condition }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form View (hidden by default if data exists) -->
+                    <form method="post" novalidate class="health-form" id="health-form" style="{% if form.instance.health_condition %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="health">
+                        
+                        <div class="form-group">
+                            <label for="id_health_condition" class="form-label">Health Conditions or Allergies</label>
+                            {{ health_form.health_condition }}
+                            <small class="form-text">List any health conditions, allergies, or sensitivities. This helps us recommend safer products for you and your family.</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-check-circle"></i> Save Health Info
+                            </button>
+                            <button type="button" class="btn-cancel" onclick="toggleSection('health-form')">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete Account - Danger Zone -->
+            <div id="danger" class="profile-card danger-card">
+                <div class="card-header-section danger-header">
+                    <h3><i class="bi bi-exclamation-triangle"></i> Danger Zone</h3>
+                    <p class="header-subtitle">Irreversible actions</p>
+                </div>
+                <div class="card-body">
+                    <div class="danger-content">
+                        <div class="danger-info">
+                            <h5>Delete Your Account</h5>
+                            <p>Once you delete your account, there is no going back. Please be absolutely certain before proceeding.</p>
+                            <ul class="danger-list">
+                                <li>All your personal data will be permanently deleted</li>
+                                <li>Your order history will be removed</li>
+                                <li>You will not be able to recover this account</li>
+                            </ul>
+                        </div>
+                        <form method="post" action="{% url 'accounts:delete_account' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-danger-action" onclick="return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone and all your data will be lost.');">
+                                <i class="bi bi-trash"></i> Delete Account Permanently
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Profile Page Styling */
+.profile-header {
+    background: linear-gradient(135deg, #2F4156 0%, #5B7C8D 100%);
+    color: white;
+    padding: 3rem 0 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+}
+
+.profile-subtitle {
+    font-size: 1rem;
+    opacity: 0.95;
+    margin: 0;
+}
+
+.profile-container {
+    padding-bottom: 4rem;
+}
+
+/* Section Navigation (Sidebar) */
+.section-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: sticky;
+    top: 100px;
+}
+
+.section-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.2rem;
+    background: white;
+    border: 1px solid #C8D9E6;
+    border-radius: 0.6rem;
+    color: #2F4156;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.section-nav .nav-link:hover {
+    background: #F5EFEB;
+    border-color: #5B7C8D;
+    color: #5B7C8D;
+}
+
+.section-nav .nav-link.active {
+    background: linear-gradient(135deg, #5B7C8D 0%, #2F4156 100%);
+    color: white;
+    border-color: #2F4156;
+}
+
+.section-nav .nav-link.danger {
+    color: #dc3545;
+    border-color: #f8d7da;
+}
+
+.section-nav .nav-link.danger:hover {
+    background: #f8d7da;
+    border-color: #dc3545;
+}
+
+.section-nav i {
+    font-size: 1.2rem;
+}
+
+/* Profile Card Styling */
+.profile-card {
+    background: white;
+    border-radius: 0.8rem;
+    border: 1px solid #C8D9E6;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    padding-top: 0;
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-header-section {
+    padding: 1.5rem;
+    background: #F5EFEB;
+    border-bottom: 1px solid #C8D9E6;
+}
+
+.section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.card-header-section h3 {
+    margin: 0 0 0.3rem;
+    color: #2F4156;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.card-header-section i {
+    color: #5B7C8D;
+    font-size: 1.4rem;
+}
+
+.header-subtitle {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2F4156;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.required {
+    color: #dc3545;
+}
+
+.profile-input,
+.form-control,
+.form-select {
+    border: 2px solid #C8D9E6 !important;
+    border-radius: 0.6rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    background-color: #FFFFFF;
+    color: #2F4156;
+    transition: all 0.3s ease;
+}
+
+.profile-input:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: #5B7C8D !important;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 0.2rem rgba(91, 124, 141, 0.15) !important;
+    color: #2F4156;
+}
+
+.profile-input:disabled,
+.form-control:disabled {
+    background-color: #F5EFEB;
+    border-color: #C8D9E6;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.4rem;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.form-error {
+    margin-top: 0.4rem;
+    color: #dc3545;
+    font-size: 0.85rem;
+}
+
+.form-error small {
+    display: block;
+}
+
+.form-check-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: #F5EFEB;
+    border-radius: 0.6rem;
+    border: 1px solid #C8D9E6;
+}
+
+.form-check-input {
+    width: 20px;
+    height: 20px;
+    margin-top: 0.3rem;
+    border: 2px solid #5B7C8D;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    accent-color: #5B7C8D;
+}
+
+.form-check-label {
+    margin: 0;
+    color: #2F4156;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Baby Info Container */
+.baby-info-container {
+    padding: 1rem;
+    background: #F5EFEB;
+    border: 1px solid #C8D9E6;
+    border-radius: 0.6rem;
+    margin-top: 1rem;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Buttons */
+.btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, #5B7C8D 0%, #2F4156 100%);
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(91, 124, 141, 0.3);
+}
+
+.btn-save:active {
+    transform: translateY(0);
+}
+
+.btn-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: #5B7C8D;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-edit:hover {
+    background: #2F4156;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(47, 65, 86, 0.3);
+}
+
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2rem;
+    background: #f0f0f0;
+    color: #666;
+    border: 1px solid #C8D9E6;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-cancel:hover {
+    background: #e8e8e8;
+    border-color: #999;
+    color: #333;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.form-actions .btn-save,
+.form-actions .btn-cancel {
+    flex: 1;
+    width: auto;
+}
+
+/* Data Summary Styles */
+.data-summary {
+    animation: slideDown 0.3s ease;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background: #F5EFEB;
+    border-radius: 0.6rem;
+    border-left: 4px solid #5B7C8D;
+}
+
+.summary-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.summary-value {
+    font-size: 1.1rem;
+    color: #2F4156;
+    font-weight: 700;
+}
+
+.badge-yes {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 0.4rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.badge-no {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: #f8d7da;
+    color: #721c24;
+    border-radius: 0.4rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.badge-default {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: #5B7C8D;
+    color: white;
+    border-radius: 0.4rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.address-summary-card {
+    padding: 1.5rem;
+    background: #F5EFEB;
+    border-radius: 0.6rem;
+    border-left: 4px solid #5B7C8D;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.address-summary-content {
+    color: #2F4156;
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+.health-summary-box {
+    padding: 1.5rem;
+    background: #F5EFEB;
+    border-radius: 0.6rem;
+    border-left: 4px solid #5B7C8D;
+    color: #2F4156;
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+/* Danger Zone */
+.danger-card {
+    border: 2px solid #f8d7da;
+    background: linear-gradient(135deg, #fff5f5 0%, #fff9f9 100%);
+}
+
+.danger-card .card-header-section {
+    background: linear-gradient(135deg, #f8d7da 0%, #f0a0a0 100%);
+    border-bottom: 2px solid #f8a5a5;
+}
+
+.danger-card .card-header-section h3 {
+    color: #721c24;
+}
+
+.danger-card .card-header-section i {
+    color: #dc3545;
+    animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-danger {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.danger-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-bottom: 2px solid #bd2130;
+}
+
+.danger-header h3 {
+    color: white;
+}
+
+.danger-header .header-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.danger-header i {
+    color: #fff8e1;
+}
+
+.danger-content {
+    padding: 1.5rem;
+}
+
+.danger-info h5 {
+    color: #721c24;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.danger-info p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.danger-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+}
+
+.danger-list li {
+    color: #666;
+    padding: 0.5rem 0 0.5rem 1.8rem;
+    position: relative;
+}
+
+.danger-list li::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    color: #dc3545;
+    font-weight: 700;
+}
+
+.btn-danger-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-danger-action:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
+}
+
+.btn-danger-action:active {
+    transform: translateY(0);
+}
+
+/* Messages Container */
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 0.6rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error,
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.btn-close {
+    font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .section-nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        position: static;
+    }
+
+    .section-nav .nav-link {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .profile-title {
+        font-size: 2rem;
+    }
+
+    .card-header-section {
+        padding: 1.2rem;
+    }
+
+    .section-header-flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-edit {
+        align-self: flex-start;
+    }
+
+    .card-header-section h3 {
+        font-size: 1.1rem;
+    }
+
+    .card-body {
+        padding: 1.2rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .form-actions .btn-save,
+    .form-actions .btn-cancel {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        padding: 2rem 0 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-title {
+        font-size: 1.5rem;
+    }
+
+    .profile-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .section-nav {
+        grid-template-columns: 1fr;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-nav .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .profile-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .card-header-section {
+        padding: 1rem;
+    }
+
+    .section-header-flex {
+        flex-direction: column;
+    }
+
+    .btn-edit {
+        align-self: flex-start;
+    }
+
+    .card-header-section h3 {
+        font-size: 1rem;
+        gap: 0.4rem;
+    }
+
+    .card-header-section i {
+        font-size: 1.2rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .profile-input,
+    .form-control,
+    .form-select {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-save,
+    .btn-cancel,
+    .btn-danger-action {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .row {
+        margin-right: -0.5rem;
+        margin-left: -0.5rem;
+    }
+
+    .row > [class*='col-'] {
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+    }
+
+    .danger-content {
+        padding: 1rem;
+    }
+
+    .danger-list {
+        margin-bottom: 1rem;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .address-summary-card {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .form-actions .btn-save,
+    .form-actions .btn-cancel {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .section-nav {
+        gap: 0.3rem;
+    }
+
+    .section-nav .nav-link {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .section-nav i {
+        font-size: 1rem;
+    }
+
+    .profile-title {
+        font-size: 1.3rem;
+    }
+
+    .card-header-section h3 {
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-check {
+        padding: 0.8rem;
+        gap: 0.4rem;
+    }
+
+    .btn-save,
+    .btn-cancel,
+    .btn-danger-action {
+        width: 100%;
+        padding: 0.75rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .form-actions .btn-save,
+    .form-actions .btn-cancel {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Baby Info Toggle
+    const isParentSelect = document.querySelector('[name="is_parent"]');
+    const babyInfo = document.getElementById('baby-info');
+    
+    function toggleBabyInfo() {
+        if (isParentSelect && babyInfo) {
+            if (isParentSelect.value === 'yes') {
+                babyInfo.style.display = 'block';
+            } else {
+                babyInfo.style.display = 'none';
+            }
+        }
+    }
+    
+    if (isParentSelect) {
+        toggleBabyInfo();
+        isParentSelect.addEventListener('change', toggleBabyInfo);
+    }
+
+    // Toggle Section Edit/View Mode
+    window.toggleSection = function(sectionId) {
+        const section = document.getElementById(sectionId);
+        const summary = section.previousElementSibling;
+        
+        if (section) {
+            // Toggle display
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                section.style.animation = 'slideDown 0.3s ease';
+            } else {
+                section.style.display = 'none';
+            }
+        }
+    };
+
+    // Smooth Scroll to Section
+    window.scrollToSection = function(sectionId) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Update active nav link
+            document.querySelectorAll('.section-nav .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.closest('.nav-link').classList.add('active');
+        }
+    };
+
+    // Close alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+});
+</script>
+
+{% endblock %}

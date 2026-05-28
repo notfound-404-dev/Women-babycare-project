@@ -1,0 +1,323 @@
+[
+  {
+    "model": "products.category",
+    "pk": 1,
+    "fields": {
+      "name": "Diapers & Wipes",
+      "slug": "diapers-wipes"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 2,
+    "fields": {
+      "name": "Feeding & Bottles",
+      "slug": "feeding-bottles"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 3,
+    "fields": {
+      "name": "Baby Skincare",
+      "slug": "baby-skincare"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 4,
+    "fields": {
+      "name": "Bath & Hygiene",
+      "slug": "bath-hygiene"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 5,
+    "fields": {
+      "name": "Clothing & Essentials",
+      "slug": "clothing-essentials"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 6,
+    "fields": {
+      "name": "Toys & Development",
+      "slug": "toys-development"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 7,
+    "fields": {
+      "name": "Health & Safety",
+      "slug": "health-safety"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 8,
+    "fields": {
+      "name": "Nursery & Bedding",
+      "slug": "nursery-bedding"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 9,
+    "fields": {
+      "name": "Baby Gear",
+      "slug": "baby-gear"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 10,
+    "fields": {
+      "name": "Mother Care",
+      "slug": "mother-care"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 11,
+    "fields": {
+      "name": "Pregnancy Wellness",
+      "slug": "pregnancy-wellness"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 12,
+    "fields": {
+      "name": "Postpartum Care",
+      "slug": "postpartum-care"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 100,
+    "fields": {
+      "name": "Newborn Comfort Diapers Pack",
+      "category": 1,
+      "price": "499.00",
+      "description": "Soft breathable diapers designed for newborn skin with wetness indicator and leak guards.",
+      "image": "products/newborn-comfort-diapers.jpg",
+      "stock": 120,
+      "baby_age_group": "0-6",
+      "is_active": true,
+      "created_at": "2026-05-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 101,
+    "fields": {
+      "name": "Overnight Dry Diapers",
+      "category": 1,
+      "price": "549.00",
+      "description": "High-absorbency diapers for longer nights with soft cuffs and secure fit.",
+      "image": "products/overnight-dry-diapers.jpg",
+      "stock": 90,
+      "baby_age_group": "6-12",
+      "is_active": true,
+      "created_at": "2026-05-02T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 102,
+    "fields": {
+      "name": "Sensitive Baby Wipes 80s",
+      "category": 1,
+      "price": "199.00",
+      "description": "Alcohol-free wipes with aloe and vitamin E for gentle daily cleaning.",
+      "image": "products/sensitive-baby-wipes-80.jpg",
+      "stock": 200,
+      "baby_age_group": "all",
+      "is_active": true,
+      "created_at": "2026-05-03T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 103,
+    "fields": {
+      "name": "Silicone Feeding Bottle 150ml",
+      "category": 2,
+      "price": "299.00",
+      "description": "Soft silicone bottle with anti-colic vent and slow-flow nipple for newborns.",
+      "image": "products/silicone-feeding-bottle-150ml.jpg",
+      "stock": 70,
+      "baby_age_group": "0-6",
+      "is_active": true,
+      "created_at": "2026-05-04T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 104,
+    "fields": {
+      "name": "Silicone Feeding Bottle 250ml",
+      "category": 2,
+      "price": "349.00",
+      "description": "Medium-flow bottle for growing babies with wide neck for easy cleaning.",
+      "image": "products/silicone-feeding-bottle-250ml.jpg",
+      "stock": 60,
+      "baby_age_group": "6-12",
+      "is_active": true,
+      "created_at": "2026-05-05T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 106,
+    "fields": {
+      "name": "Weaning Spoon Set (6 Pack)",
+      "category": 2,
+      "price": "159.00",
+      "description": "Soft-tip weaning spoons safe for tender gums and first foods.",
+      "image": "products/weaning-spoon-set-6-pack.png",
+      "stock": 140,
+      "baby_age_group": "6-12",
+      "is_active": true,
+      "created_at": "2026-05-07T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 107,
+    "fields": {
+      "name": "Anti-Rash Diaper Cream",
+      "category": 3,
+      "price": "249.00",
+      "description": "Zinc-oxide barrier cream to soothe and protect delicate skin.",
+      "image": "products/anti-rash-diaper-cream.png",
+      "stock": 110,
+      "baby_age_group": "all",
+      "is_active": true,
+      "created_at": "2026-05-08T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 108,
+    "fields": {
+      "name": "Gentle Baby Lotion",
+      "category": 3,
+      "price": "229.00",
+      "description": "Lightweight daily moisturizer with oat extract for newborn skin.",
+      "image": "products/gentle-baby-lotion.jpg",
+      "stock": 95,
+      "baby_age_group": "0-6",
+      "is_active": true,
+      "created_at": "2026-05-09T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 109,
+    "fields": {
+      "name": "Mild Baby Shampoo",
+      "category": 4,
+      "price": "199.00",
+      "description": "Tear-free shampoo with a mild scent for everyday baths.",
+      "image": "products/mild-baby-shampoo.jpg",
+      "stock": 100,
+      "baby_age_group": "all",
+      "is_active": true,
+      "created_at": "2026-05-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 111,
+    "fields": {
+      "name": "Organic Cotton Bodysuit 3-Pack",
+      "category": 5,
+      "price": "599.00",
+      "description": "Breathable organic cotton bodysuits with envelope neck for easy changes.",
+      "image": "products/organic-cotton-bodysuit-3-pack.jpeg",
+      "stock": 60,
+      "baby_age_group": "0-6",
+      "is_active": true,
+      "created_at": "2026-05-12T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 123,
+    "fields": {
+      "name": "Maternity Support Belt",
+      "category": 11,
+      "price": "699.00",
+      "description": "Adjustable belt to support the lower back and belly during pregnancy.",
+      "image": "products/maternity-support-belt.jpg",
+      "stock": 50,
+      "baby_age_group": "mother",
+      "is_active": true,
+      "created_at": "2026-05-24T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 124,
+    "fields": {
+      "name": "Prenatal Vitamin Pack",
+      "category": 11,
+      "price": "499.00",
+      "description": "Daily prenatal vitamins with folic acid and iron for pregnancy wellness.",
+      "image": "products/prenatal-vitamin-pack.jpg",
+      "stock": 120,
+      "baby_age_group": "mother",
+      "is_active": true,
+      "created_at": "2026-05-25T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 125,
+    "fields": {
+      "name": "Nursing Bra 2-Pack",
+      "category": 10,
+      "price": "599.00",
+      "description": "Soft cotton nursing bras with easy clip access for feeding.",
+      "image": "products/nursing-bra-2-pack.jpg",
+      "stock": 70,
+      "baby_age_group": "mother",
+      "is_active": true,
+      "created_at": "2026-05-26T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 127,
+    "fields": {
+      "name": "Postpartum Recovery Pads",
+      "category": 12,
+      "price": "299.00",
+      "description": "Extra-soft pads designed for postpartum comfort and support.",
+      "image": "products/postpartum-recovery-pads.jpg",
+      "stock": 110,
+      "baby_age_group": "mother",
+      "is_active": true,
+      "created_at": "2026-05-28T10:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 128,
+    "fields": {
+      "name": "Manual Breast Pump",
+      "category": 12,
+      "price": "899.00",
+      "description": "Portable manual breast pump with gentle suction and easy cleaning.",
+      "image": "products/manual-breast-pump.jpg",
+      "stock": 30,
+      "baby_age_group": "mother",
+      "is_active": true,
+      "created_at": "2026-05-29T10:00:00Z"
+    }
+  }
+]

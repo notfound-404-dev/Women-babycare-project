@@ -1,0 +1,659 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="product-detail-page">
+    <div class="product-detail-shell">
+        <nav class="product-breadcrumbs" aria-label="Breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span>/</span>
+            <a href="{% url 'products:list' %}">Products</a>
+            <span>/</span>
+            <span>{{ product.name }}</span>
+        </nav>
+
+        <div class="product-hero-card">
+            <div class="product-gallery-panel">
+                <div class="product-main-image-wrap">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-main-image">
+                    {% else %}
+                        <div class="product-image-placeholder">
+                            <i class="bi bi-image"></i>
+                            <span>No image available</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="product-mini-strip">
+                    <div class="product-mini-card is-active">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }} preview">
+                        {% else %}
+                            <i class="bi bi-image"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-buy-panel">
+                <div class="product-label-row">
+                    <span class="product-brand-tag">{{ product.category.name }}</span>
+                    {% if product.stock > 0 %}
+                        <span class="stock-pill in-stock">In Stock</span>
+                    {% else %}
+                        <span class="stock-pill out-stock">Out of Stock</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="product-title">{{ product.name }}</h1>
+
+                <div class="product-meta-line">
+                    <span class="product-rating"><i class="bi bi-star-fill"></i> 4.9</span>
+                    <span class="product-meta-dot">•</span>
+                    <span>{{ product.get_baby_age_group_display }}</span>
+                </div>
+
+                <div class="product-price-block">
+                    <div class="product-price">₹{{ product.price }}</div>
+                    <div class="product-stock-note">{% if product.stock > 0 %}{{ product.stock }} left in stock{% else %}Currently unavailable{% endif %}</div>
+                </div>
+
+                <p class="product-lead-copy">{{ product.description|truncatewords:28 }}</p>
+
+                <div class="delivery-strip">
+                    <div><i class="bi bi-truck"></i> Free delivery</div>
+                    <div><i class="bi bi-arrow-return-left"></i> 60-day returns</div>
+                </div>
+
+                <div class="price-match-box">
+                    <span>Seen a better price?</span>
+                    <a href="#">Price match here</a>
+                </div>
+
+                <div class="purchase-panel">
+                    {% if product.stock > 0 %}
+                        <form method="post" action="{% url 'cart:add' product.pk %}" class="purchase-form">
+                            {% csrf_token %}
+                            <label class="quantity-field">
+                                <span>Qty</span>
+                                <input type="number" name="quantity" min="1" max="{{ product.stock }}" value="1">
+                            </label>
+                            <button type="submit" class="btn-buy-now">
+                                <i class="bi bi-bag-plus"></i>
+                                Add to cart
+                            </button>
+                        </form>
+                    {% else %}
+                        <button type="button" class="btn-buy-now is-disabled" disabled>
+                            <i class="bi bi-x-circle"></i>
+                            Out of stock
+                        </button>
+                    {% endif %}
+                </div>
+
+                <div class="payment-note">
+                    <strong>Flexible payments</strong>
+                    <p>Pay securely online with available payment methods at checkout.</p>
+                </div>
+
+                <div class="product-accordion-list">
+                    <details class="product-accordion-item" open>
+                        <summary>Description</summary>
+                        <div class="product-accordion-body">
+                            <p>{{ product.description }}</p>
+                        </div>
+                    </details>
+
+                    <details class="product-accordion-item">
+                        <summary>Highlights</summary>
+                        <div class="product-accordion-body">
+                            <ul class="detail-list compact-list">
+                                {% for item in product_highlights %}
+                                    <li><strong>{{ item.label }}:</strong> {{ item.value }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="product-accordion-item">
+                        <summary>What's in the box</summary>
+                        <div class="product-accordion-body">
+                            <ul class="detail-list compact-list">
+                                {% for item in what_in_the_box %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="product-accordion-item">
+                        <summary>Size + fit</summary>
+                        <div class="product-accordion-body">
+                            <ul class="detail-list compact-list">
+                                {% for item in size_and_fit %}
+                                    <li>{{ item }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="product-accordion-item">
+                        <summary>Warranty</summary>
+                        <div class="product-accordion-body">
+                            <p>{{ warranty_text }}</p>
+                        </div>
+                    </details>
+
+                    <details class="product-accordion-item">
+                        <summary>Delivery + returns</summary>
+                        <div class="product-accordion-body">
+                            <ul class="detail-list compact-list">
+                                <li>Free delivery on eligible orders.</li>
+                                <li>Easy returns within the policy window shown at checkout.</li>
+                                <li>Shipping times depend on location and stock availability.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="product-accordion-item">
+                        <summary>Technical info</summary>
+                        <div class="product-accordion-body">
+                            <ul class="detail-list compact-list">
+                                <li><strong>Category:</strong> {{ product.category.name }}</li>
+                                <li><strong>Age group:</strong> {{ product.get_baby_age_group_display }}</li>
+                                <li><strong>Stock:</strong> {{ product.stock }}</li>
+                                <li><strong>Status:</strong> {% if product.stock > 0 %}Available{% else %}Unavailable{% endif %}</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        {% if related_products %}
+        <section class="related-products-section">
+            <div class="section-title-row">
+                <h2>You may also like</h2>
+            </div>
+            <div class="related-grid">
+                {% for related in related_products %}
+                    <a class="related-card" href="{% url 'products:detail' related.pk %}">
+                        <div class="related-image-wrap">
+                            {% if related.image %}
+                                <img src="{{ related.image.url }}" alt="{{ related.name }}">
+                            {% else %}
+                                <div class="related-image-placeholder"><i class="bi bi-image"></i></div>
+                            {% endif %}
+                        </div>
+                        <div class="related-copy">
+                            <small>{{ related.category.name }}</small>
+                            <h3>{{ related.name }}</h3>
+                            <strong>₹{{ related.price }}</strong>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.product-detail-page {
+    padding: 2rem 0 4rem;
+    background: #f7f8fb;
+}
+
+.product-detail-shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.product-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.9rem;
+    color: #667085;
+    margin-bottom: 1rem;
+}
+
+.product-breadcrumbs a {
+    color: var(--secondary-teal);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.product-hero-card,
+.product-tabs-card,
+.related-products-section {
+    background: #ffffff;
+    border: 1px solid var(--accent-blue);
+    box-shadow: 0 12px 30px rgba(47, 65, 86, 0.06);
+}
+
+.product-hero-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+    gap: 2rem;
+    padding: 1.5rem;
+}
+
+.product-gallery-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.product-main-image-wrap {
+    background: #f2f5f7;
+    border: 1px solid var(--accent-blue);
+    min-height: 620px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.product-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.product-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--text-light);
+    min-height: 620px;
+    width: 100%;
+    font-size: 3rem;
+}
+
+.product-image-placeholder span {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.product-mini-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.product-mini-card {
+    min-height: 88px;
+    border: 1px solid var(--accent-blue);
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-teal);
+    overflow: hidden;
+}
+
+.product-mini-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.product-mini-card.is-active {
+    background: #ffffff;
+    border-color: var(--secondary-teal);
+}
+
+.product-buy-panel {
+    padding-left: 0.5rem;
+}
+
+.product-accordion-list {
+    margin-top: 1.5rem;
+    border-top: 1px solid #e7e7e7;
+}
+
+.product-accordion-item {
+    border-bottom: 1px solid #e7e7e7;
+    padding: 0.15rem 0;
+}
+
+.product-accordion-item summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #3f3f46;
+}
+
+.product-accordion-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.product-accordion-item summary::after {
+    content: '';
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    color: #3f3f46;
+    transition: transform 0.2s ease;
+}
+
+.product-accordion-item[open] summary::after {
+    transform: rotate(-135deg);
+}
+
+.product-accordion-body {
+    padding: 0 0 1rem;
+}
+
+.compact-list {
+    gap: 0.5rem;
+}
+
+.product-label-row,
+.product-meta-line,
+.delivery-strip,
+.purchase-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.product-label-row {
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+}
+
+.product-brand-tag,
+.stock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--accent-blue);
+}
+
+.stock-pill.in-stock {
+    background: #effaf3;
+    color: #16794c;
+    border-color: #b9e6ca;
+}
+
+.stock-pill.out-stock {
+    background: #fff1f1;
+    color: #ba1b1b;
+    border-color: #f3c0c0;
+}
+
+.product-title {
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.05;
+    color: var(--primary-navy);
+    margin: 0 0 0.8rem;
+    font-weight: 800;
+}
+
+.product-meta-line {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.product-rating {
+    color: #c58b00;
+    font-weight: 700;
+}
+
+.product-price-block {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.product-price {
+    font-size: clamp(2rem, 2.7vw, 3.2rem);
+    font-weight: 800;
+    color: var(--primary-navy);
+}
+
+.product-stock-note {
+    color: var(--secondary-teal);
+    font-weight: 600;
+}
+
+.product-lead-copy {
+    color: #475467;
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+.delivery-strip {
+    margin-bottom: 1rem;
+    gap: 1rem 1.5rem;
+    color: var(--primary-navy);
+    font-weight: 600;
+}
+
+.price-match-box {
+    border: 1px solid var(--accent-blue);
+    background: #f8fafc;
+    padding: 0.9rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.price-match-box a {
+    color: var(--secondary-teal);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.purchase-panel {
+    border-top: 1px solid var(--accent-blue);
+    border-bottom: 1px solid var(--accent-blue);
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+}
+
+.purchase-form {
+    align-items: end;
+}
+
+.quantity-field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 110px;
+    font-weight: 700;
+    color: var(--primary-navy);
+}
+
+.quantity-field input {
+    width: 100%;
+    padding: 0.85rem 0.9rem;
+    border: 1px solid var(--accent-blue);
+    background: #ffffff;
+    color: var(--text-dark);
+}
+
+.btn-buy-now {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.95rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-navy), var(--secondary-teal));
+    color: #ffffff;
+    border: none;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    min-height: 52px;
+}
+
+.btn-buy-now.is-disabled {
+    background: #9aa4b2;
+    cursor: not-allowed;
+}
+
+.payment-note {
+    color: #475467;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.payment-note strong {
+    display: block;
+    color: var(--primary-navy);
+    margin-bottom: 0.25rem;
+}
+
+.section-title-row h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    color: var(--primary-navy);
+    font-weight: 800;
+}
+
+.detail-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.65rem;
+}
+
+.related-products-section {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.related-card {
+    border: 1px solid var(--accent-blue);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    background: #ffffff;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.related-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(47, 65, 86, 0.08);
+}
+
+.related-image-wrap {
+    height: 200px;
+    background: #f2f5f7;
+}
+
+.related-image-wrap img,
+.related-image-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.related-image-placeholder {
+    color: var(--secondary-teal);
+    font-size: 2.5rem;
+}
+
+.related-copy {
+    padding: 0.9rem;
+    display: grid;
+    gap: 0.4rem;
+}
+
+.related-copy small {
+    color: var(--secondary-teal);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.related-copy h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--primary-navy);
+}
+
+.related-copy strong {
+    color: var(--secondary-teal);
+    font-size: 1.05rem;
+}
+
+@media (max-width: 992px) {
+    .product-hero-card {
+        grid-template-columns: 1fr;
+    }
+
+    .product-main-image-wrap,
+    .product-image-placeholder {
+        min-height: 420px;
+    }
+
+    .related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .product-detail-shell {
+        padding: 0 1rem;
+    }
+
+    .product-hero-card,
+    .related-products-section {
+        padding: 1rem;
+    }
+
+    .product-mini-strip,
+    .related-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .purchase-form {
+        align-items: stretch;
+    }
+
+    .quantity-field,
+    .btn-buy-now {
+        width: 100%;
+    }
+
+}
+</style>
+{% endblock %}

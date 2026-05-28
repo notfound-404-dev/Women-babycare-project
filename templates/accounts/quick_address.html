@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Delivery Address Required</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Please enter your delivery address to continue with checkout.</p>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">House / Flat Number *</label>
+                            {{ form.house_number }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Street Name *</label>
+                            {{ form.street_name }}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">City *</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">State *</label>
+                                {{ form.state }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pincode *</label>
+                                {{ form.pincode }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Country</label>
+                                {{ form.country }}
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Continue to Checkout</button>
+                    </form>
+                    
+                    <p class="text-center mt-3"><a href="{% url 'accounts:profile' %}">Go to complete profile</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

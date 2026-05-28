@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container-lg">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Shop</h1>
+                <p class="hero-subtitle">Discover Everything You Need for Mother & Baby</p>
+            </div>
+            <form method="get" class="hero-search-form">
+                <div class="search-wrapper">
+                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" name="q" class="form-control hero-search" placeholder="Search for products..." value="{{ request.GET.q }}">
+                </div>
+                <button type="submit" class="btn btn-search">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container-lg py-5">
+    <div class="row g-4">
+        <!-- Desktop Sidebar Filters -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="filters-card">
+                <h5 class="filters-title mb-4">
+                    <i class="bi bi-funnel"></i> Filters
+                </h5>
+                
+                <!-- Category Filter -->
+                <div class="filter-group">
+                    <h6 class="filter-title">
+                        <i class="bi bi-bookmark"></i> Category
+                    </h6>
+                    <form method="get" id="categoryForm" class="filter-form">
+                        {% for category in categories %}
+                            <div class="form-check filter-check">
+                                <input class="form-check-input" type="radio" name="category" value="{{ category.slug }}" id="cat-{{ category.slug }}" 
+                                    {% if request.GET.category == category.slug %}checked{% endif %} onchange="document.getElementById('categoryForm').submit()">
+                                <label class="form-check-label" for="cat-{{ category.slug }}">
+                                    {{ category.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        {% if request.GET.category %}
+                            <a href="?" class="clear-filter">
+                                <i class="bi bi-x"></i> Clear Filter
+                            </a>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <!-- Baby Age Group Filter -->
+                <div class="filter-group">
+                    <h6 class="filter-title">
+                        <i class="bi bi-calendar-baby"></i> Baby Age Group
+                    </h6>
+                    <form method="get" id="ageForm" class="filter-form">
+                        {% for code, label in age_groups %}
+                            <div class="form-check filter-check">
+                                <input class="form-check-input age-group-checkbox" type="checkbox" name="age_group" value="{{ code }}" id="age-{{ code }}" 
+                                    {% if request.GET.age_group == code %}checked{% endif %} onchange="document.getElementById('ageForm').submit()">
+                                <label class="form-check-label" for="age-{{ code }}">
+                                    {{ label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="filter-group">
+                    <h6 class="filter-title">
+                        <i class="bi bi-currency-rupee"></i> Price Range
+                    </h6>
+                    <form method="get" class="price-filter-form">
+                        <fieldset class="price-inputs">
+                            <input type="number" step="0.01" name="min_price" class="form-control" placeholder="Min Price" value="{{ request.GET.min_price }}">
+                            <span class="price-separator">—</span>
+                            <input type="number" step="0.01" name="max_price" class="form-control" placeholder="Max Price" value="{{ request.GET.max_price }}">
+                        </fieldset>
+                        <button type="submit" class="btn btn-apply-filter w-100 mt-3">
+                            <i class="bi bi-check-lg"></i> Apply Filter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Filter Toggle Button -->
+        <div class="col-12 d-lg-none d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Products</h5>
+            <button class="btn btn-filter-mobile" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+                <i class="bi bi-funnel"></i> Filters
+            </button>
+        </div>
+
+        <!-- Mobile Offcanvas Filters -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title">Filters</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <!-- Category Filter (Mobile) -->
+                <div class="filter-group">
+                    <h6 class="filter-title">Category</h6>
+                    <form method="get" id="categoryFormMobile" class="filter-form">
+                        {% for category in categories %}
+                            <div class="form-check filter-check">
+                                <input class="form-check-input" type="radio" name="category" value="{{ category.slug }}" id="cat-mobile-{{ category.slug }}" 
+                                    {% if request.GET.category == category.slug %}checked{% endif %} onchange="document.getElementById('categoryFormMobile').submit()">
+                                <label class="form-check-label" for="cat-mobile-{{ category.slug }}">
+                                    {{ category.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+
+                <!-- Baby Age Group Filter (Mobile) -->
+                <div class="filter-group">
+                    <h6 class="filter-title">Baby Age Group</h6>
+                    <form method="get" id="ageFormMobile" class="filter-form">
+                        {% for code, label in age_groups %}
+                            <div class="form-check filter-check">
+                                <input class="form-check-input age-group-checkbox" type="checkbox" name="age_group" value="{{ code }}" id="age-mobile-{{ code }}" 
+                                    {% if request.GET.age_group == code %}checked{% endif %} onchange="document.getElementById('ageFormMobile').submit()">
+                                <label class="form-check-label" for="age-mobile-{{ code }}">
+                                    {{ label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+
+                <!-- Price Range Filter (Mobile) -->
+                <div class="filter-group">
+                    <h6 class="filter-title">Price Range</h6>
+                    <form method="get" class="price-filter-form">
+                        <fieldset class="price-inputs">
+                            <input type="number" step="0.01" name="min_price" class="form-control" placeholder="Min Price" value="{{ request.GET.min_price }}">
+                            <span class="price-separator">—</span>
+                            <input type="number" step="0.01" name="max_price" class="form-control" placeholder="Max Price" value="{{ request.GET.max_price }}">
+                        </fieldset>
+                        <button type="submit" class="btn btn-apply-filter w-100 mt-3">Apply Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <!-- Products Header -->
+            <div class="products-header mb-5">
+                <div>
+                    <h4 class="products-count">{{ page_obj.paginator.count|default:0 }} Products</h4>
+                    <p class="products-subtitle">Browse our curated collection of premium products</p>
+                </div>
+            </div>
+
+            {% if products %}
+                <div class="row g-4">
+                    {% for product in products %}
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="product-card">
+                            <div class="product-image-wrapper">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                                {% else %}
+                                    <div class="product-image placeholder-image">
+                                        <i class="bi bi-image"></i>
+                                        <span>No Image</span>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if product.get_baby_age_group_display %}
+                                    <span class="product-badge">{{ product.get_baby_age_group_display }}</span>
+                                {% endif %}
+                                
+                                <div class="product-overlay">
+                                    <a href="{% url 'products:detail' product.pk %}" class="btn btn-view-details">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="product-info">
+                                <div class="product-meta">
+                                    <span class="product-category">{{ product.category.name }}</span>
+                                    {% if product.stock > 0 %}
+                                        <span class="product-stock">In Stock</span>
+                                    {% else %}
+                                        <span class="product-stock out-of-stock">Out of Stock</span>
+                                    {% endif %}
+                                </div>
+
+                                <h5 class="product-name">{{ product.name }}</h5>
+
+                                <div class="product-rating mb-2">
+                                    <div class="stars">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-half"></i>
+                                    </div>
+                                    <!-- <span class="rating-text">({{ product.stock }} stock)</span> -->
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-price-section">
+                                        <span class="product-price">₹{{ product.price }}</span>
+                                    </div>
+
+                                    <form method="post" action="{% url 'cart:add' product.pk %}" class="product-action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-add-cart" {% if product.stock <= 0 %}disabled{% endif %}>
+                                            <i class="bi bi-bag-plus"></i>
+                                            <span class="btn-text">Add to Cart</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav class="pagination-wrapper mt-5" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- Previous Page -->
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First page">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                    <i class="bi bi-chevron-left"></i> Previous
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+                            </li>
+                        {% endif %}
+
+                        <!-- Page Numbers -->
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+
+                        <!-- Next Page -->
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                    Next <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last page">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% else %}
+                <div class="no-products">
+                    <div class="no-products-icon">
+                        <i class="bi bi-inbox"></i>
+                    </div>
+                    <h5>No Products Found</h5>
+                    <p class="text-muted">We couldn't find any products matching your filters. Try adjusting your search or filters.</p>
+                    <a href="?" class="btn btn-primary mt-3">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

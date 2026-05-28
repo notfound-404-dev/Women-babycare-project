@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Payment Processing Header -->
+<div class="payment-header">
+    <div class="container-lg">
+        <h1 class="payment-title">Complete Your Payment</h1>
+        <p class="payment-subtitle">Test Payment Mode</p>
+    </div>
+</div>
+
+<div class="container-lg payment-wrapper">
+    <div class="row g-4">
+        <!-- Payment Card -->
+        <div class="col-lg-8 offset-lg-2">
+            <div class="payment-card-wrapper">
+                <!-- Warning Banner -->
+                {% if error_message %}
+                <div class="alert-warning-banner">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span>{{ error_message }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Order Summary -->
+                <div class="order-summary-card">
+                    <div class="summary-header">
+                        <h3><i class="bi bi-bag-check"></i> Order Summary</h3>
+                    </div>
+                    <div class="summary-body">
+                        <div class="summary-row">
+                            <span>Total Amount:</span>
+                            <strong>₹{{ amount }}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Payment Method:</span>
+                            <strong>Test Payment</strong>
+                        </div>
+                        <div class="test-mode-badge">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Test Mode - No real charge</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Payment Info -->
+                <div class="test-cards-info">
+                    <div class="info-header">
+                        <h4><i class="bi bi-flask"></i> Test Payment Instructions</h4>
+                    </div>
+                    <div class="info-content">
+                        <p><strong>To complete this test payment:</strong></p>
+                        <ul class="test-credentials">
+                            <li><strong>✓</strong> Click the "Confirm Test Payment" button</li>
+                            <li><strong>✓</strong> No actual charge will be made</li>
+                            <li><strong>✓</strong> Your order will be created with PENDING status</li>
+                            <li><strong>✓</strong> This is for testing purposes only</li>
+                        </ul>
+                        <div class="info-note">
+                            <p><strong>Note:</strong> To use real Razorpay payments, configure your credentials in settings.py</p>
+                            <code>RAZORPAY_KEY_ID = "your_test_key"<br>RAZORPAY_KEY_SECRET = "your_test_secret"</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Button -->
+                <div class="payment-button-container">
+                    <form method="post" action="{% url 'orders:test_payment_confirm' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order_id }}">
+                        <button type="submit" class="btn-pay">
+                            <i class="bi bi-check-circle"></i> Confirm Test Payment
+                        </button>
+                    </form>
+                    <a href="{% url 'orders:checkout' %}" class="btn-cancel">
+                        <i class="bi bi-arrow-left"></i> Back to Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --primary-navy: #2F4156;
+    --secondary-teal: #5B7C8D;
+    --accent-blue: #C8D9E6;
+    --bg-beige: #F5EFEB;
+    --text-dark: #2F4156;
+    --text-light: #5B7C8D;
+    --border-color: #D8D0CA;
+    --white: #FFFFFF;
+}
+
+.payment-header {
+    background: linear-gradient(135deg, #2F4156, #5B7C8D);
+    color: white;
+    padding: 3rem 0 2rem;
+    margin-bottom: 2rem;
+}
+
+.payment-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.payment-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.payment-wrapper {
+    padding-bottom: 4rem;
+}
+
+.alert-warning-banner {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 0.6rem;
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #856404;
+    font-weight: 600;
+}
+
+.alert-warning-banner i {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.payment-card-wrapper {
+    background: white;
+    border-radius: 0.8rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.order-summary-card {
+    border-bottom: 1px solid var(--accent-blue);
+}
+
+.summary-header {
+    padding: 1.5rem;
+    background: #F5EFEB;
+    border-bottom: 2px solid var(--accent-blue);
+}
+
+.summary-header h3 {
+    margin: 0;
+    color: var(--primary-navy);
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.summary-header i {
+    color: var(--secondary-teal);
+    font-size: 1.3rem;
+}
+
+.summary-body {
+    padding: 2rem 1.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    font-size: 1.05rem;
+    border-bottom: 1px solid var(--accent-blue);
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.summary-row strong {
+    color: var(--secondary-teal);
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.test-mode-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #d4edda;
+    border: 1px solid #28a745;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 0.6rem;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+.test-mode-badge i {
+    font-size: 1.2rem;
+}
+
+.test-cards-info {
+    border-bottom: 1px solid var(--accent-blue);
+}
+
+.info-header {
+    padding: 1.5rem;
+    background: #e7f3ff;
+    border-bottom: 2px solid #17a2b8;
+}
+
+.info-header h4 {
+    margin: 0;
+    color: #0c5460;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.info-header i {
+    color: #17a2b8;
+    font-size: 1.2rem;
+}
+
+.info-content {
+    padding: 2rem 1.5rem;
+}
+
+.info-content p {
+    margin: 0 0 1rem 0;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.test-credentials {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.test-credentials li {
+    padding: 0.8rem 0;
+    color: #333;
+    border-bottom: 1px solid var(--accent-blue);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.test-credentials li:last-child {
+    border-bottom: none;
+}
+
+.test-credentials strong {
+    color: var(--secondary-teal);
+}
+
+.info-note {
+    background: #f0f8ff;
+    border: 1px solid #17a2b8;
+    border-radius: 0.6rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.info-note p {
+    margin: 0 0 0.5rem 0;
+}
+
+.info-note code {
+    background: white;
+    padding: 0.8rem;
+    border-radius: 0.4rem;
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    line-height: 1.4;
+    border-left: 3px solid var(--secondary-teal);
+}
+
+.payment-button-container {
+    padding: 2rem 1.5rem;
+    background: #F5EFEB;
+}
+
+.btn-pay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, var(--secondary-teal), var(--primary-navy));
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.btn-pay:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(91, 124, 141, 0.3);
+}
+
+.btn-pay:active {
+    transform: translateY(0);
+}
+
+.btn-cancel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1rem;
+    background: white;
+    color: var(--secondary-teal);
+    border: 2px solid var(--secondary-teal);
+    border-radius: 0.6rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: var(--secondary-teal);
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .payment-title {
+        font-size: 1.5rem;
+    }
+
+    .summary-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .summary-row strong {
+        font-size: 1.1rem;
+    }
+
+    .btn-pay, .btn-cancel {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+}
+</style>
+
+{% endblock %}

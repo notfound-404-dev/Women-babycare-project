@@ -1,0 +1,397 @@
+{% load static %}
+{% load notification_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Care for You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+<!-- Clean Professional Navigation Bar -->
+<nav class="navbar-clean sticky-top">
+    <div class="navbar-clean-container">
+        <!-- Left: Logo -->
+        <a class="navbar-logo" href="{% url 'home' %}">
+            <img src="{% static 'img/logo1.png' %}" alt="Care for You Logo" class="navbar-logo-img">
+            <span>Care for You</span>
+        </a>
+
+        <!-- Center: Search (Desktop) -->
+        <form method="get" action="{% url 'products:list' %}" class="navbar-search">
+            <input type="text" name="q" class="search-box" placeholder="Search products..." value="{{ request.GET.q }}">
+            <button type="submit" class="search-btn"><i class="bi bi-search"></i></button>
+        </form>
+
+        <!-- Right: Actions & Mobile Menu -->
+        <div class="navbar-actions-container">
+            <!-- Desktop: Full Navigation -->
+            <div class="navbar-desktop-actions">
+                <a href="{% url 'home' %}" class="nav-link-clean">
+                    <i class="bi bi-house"></i> Home
+                </a>
+                <a href="{% url 'products:list' %}" class="nav-link-clean">
+                    <i class="bi bi-shop"></i> Products
+                </a>
+                <a href="{% url 'cart:summary' %}" class="nav-link-clean">
+                    <i class="bi bi-bag"></i> Cart
+                </a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'orders:list' %}" class="nav-link-clean">
+                        <i class="bi bi-box-seam"></i> Orders
+                    </a>
+                    <a href="{% url 'notifications:list' %}" class="nav-link-clean notification-link">
+                        <i class="bi bi-bell"></i>
+                        {% with count=user|unread_count %}
+                            {% if count > 0 %}
+                                <span class="notification-badge-count">{{ count }}</span>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                    <div class="dropdown-clean">
+                        <button class="nav-account-btn">
+                            <i class="bi bi-person-circle"></i> Account
+                        </button>
+                        <div class="dropdown-content-clean">
+                            <a href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i> Profile</a>
+                            <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn-nav-outline">Login</a>
+                    <a href="{% url 'accounts:register' %}" class="btn-nav-solid">Register</a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile: Hamburger Menu -->
+            <button class="navbar-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="navbar-mobile-menu" id="mobileMenu">
+        <!-- Mobile Search -->
+        <form method="get" action="{% url 'products:list' %}" class="navbar-search-mobile">
+            <input type="text" name="q" class="search-box" placeholder="Search..." value="{{ request.GET.q }}">
+            <button type="submit"><i class="bi bi-search"></i></button>
+        </form>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-menu-items">
+            <a href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
+            <a href="{% url 'products:list' %}"><i class="bi bi-shop"></i> Products</a>
+            <a href="{% url 'cart:summary' %}"><i class="bi bi-bag"></i> Cart</a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'orders:list' %}"><i class="bi bi-box-seam"></i> Orders</a>
+                <a href="{% url 'notifications:list' %}" class="mobile-notifications-link">
+                    <i class="bi bi-bell"></i> Notifications
+                    {% with count=user|unread_count %}
+                        {% if count > 0 %}
+                            <span class="mobile-notification-count">{{ count }}</span>
+                        {% endif %}
+                    {% endwith %}
+                </a>
+                <a href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i> Profile</a>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="mobile-login">Login</a>
+                <a href="{% url 'accounts:register' %}" class="mobile-register">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<main class="main-content">
+    {% include 'partials/messages.html' %}
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="container-lg">
+            <div class="footer-grid">
+                <!-- Brand Section -->
+                <div class="footer-section footer-brand">
+                    <div class="footer-logo">
+                        <img src="{% static 'img/logo1.png' %}" alt="Care for You" class="footer-logo-img">
+                        <span>Care for You</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted partner for quality women's and baby care products. We deliver excellence and care with every purchase.
+                    </p>
+                    <div class="footer-socials">
+                        <a href="#" title="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" title="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="{% url 'products:list' %}">Products</a></li>
+                        <li><a href="{% url 'cart:summary' %}">Cart</a></li>
+                        <li><a href="{% url 'orders:list' %}">Orders</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Support -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Information -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Information</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Contact</h4>
+                    <div class="footer-contact-item">
+                        <i class="bi bi-telephone"></i>
+                        <span>1-800-CARE-NOW</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="bi bi-envelope"></i>
+                        <span>support@careforyou.com</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Available 24/7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="container-lg">
+            <div class="footer-bottom-content">
+                <p>&copy; 2024 Care for You. All rights reserved.</p>
+                <div class="footer-payment-methods">
+                    <span><i class="bi bi-credit-card"></i> Secure Payments</span>
+                    <span><i class="bi bi-truck"></i> Free Shipping</span>
+                    <span><i class="bi bi-arrow-repeat"></i> Easy Returns</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+.site-footer {
+    background: #2f4156;
+    color: white;
+    /* margin-top: 4rem; */
+}
+
+.footer-content {
+    padding: 4rem 0 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+}
+
+.footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.footer-brand {
+    gap: 1.5rem;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    text-decoration: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.footer-logo-img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+}
+
+.footer-description {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 1rem;
+}
+
+.footer-socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.footer-socials a:hover {
+    background: #5B7C8D;
+    transform: translateY(-3px);
+}
+
+.footer-heading {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+}
+
+.footer-links a:hover {
+    color: #C8D9E6;
+    padding-left: 0.5rem;
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+}
+
+.footer-contact-item i {
+    font-size: 1.2rem;
+    color: #5B7C8D;
+}
+
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2rem 0;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.footer-bottom-content p {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.footer-payment-methods {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.footer-payment-methods span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.footer-payment-methods i {
+    color: #5B7C8D;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        padding: 2rem 0 1.5rem;
+    }
+
+    .footer-grid {
+        gap: 2rem;
+    }
+
+    .footer-bottom-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .footer-payment-methods {
+        gap: 1rem;
+    }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>
