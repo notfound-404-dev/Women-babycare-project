@@ -12,7 +12,6 @@
 - `orders` (checkout, payment simulation, tracking)
 - `personalization` (recommendations + search history)
 - `notifications_app` (user notifications)
-- `health_identifier` (health/age product suggestions)
 - `dashboard` (admin analytics view)
 
 ## Setup
