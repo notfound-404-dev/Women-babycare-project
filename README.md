@@ -5,7 +5,7 @@
 - MySQL
 - HTML/CSS/JavaScript (Bootstrap)
 
-## Generated apps
+## Apps
 - `accounts` (auth + profile)
 - `products` (catalog + filters)
 - `cart` (shopping cart)
@@ -13,6 +13,9 @@
 - `personalization` (recommendations + search history)
 - `notifications_app` (user notifications)
 - `dashboard` (admin analytics view)
+
+## Documentation
+See `DOCUMENTATION.md` for full project documentation.
 
 ## Setup
 1. Install dependencies: `pip install -r requirements.txt`
